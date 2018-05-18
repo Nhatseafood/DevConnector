@@ -19,9 +19,9 @@ mongoose
 app.get("/", (request, response) => response.send("Hello!!!"));
 
 // Use Routes
-app.use("./users", users);
-app.use("./profile", profile);
-app.use("./posts", posts);
+app.use("/api/users", users);
+app.use("/api/profile", profile);
+app.use("/api/posts", posts);
 
 const port = process.env.PORT || 5000;
 
