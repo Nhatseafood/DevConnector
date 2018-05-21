@@ -10,7 +10,7 @@ const validateEducationInput = require("../../validations/education");
 
 // load profile model
 const Profile = require("../../models/Profile");
-// load user profile
+// load user model
 const user = require("../../models/User");
 
 // @route GET api/profile/test
@@ -236,6 +236,69 @@ router.post(
       profile.education.unshift(newEdu);
 
       profile.save().then(profile => response.json(profile));
+    });
+  }
+);
+
+// @route DELETE api/profile/experience/:exp_id
+// @description Delete experience from profile
+// @access Private
+router.delete(
+  "/experience/:exp_id",
+  passport.authenticate("jwt", { session: false }),
+  (request, response) => {
+    Profile.findOne({ user: request.user.id })
+      .then(profile => {
+        // Get remove index
+        const removeIndex = profile.experience
+          .map(item => item.id)
+          .indexOf(request.params.exp_id);
+
+        // Slice out of array
+        profile.experience.splice(removeIndex, 1);
+
+        //save
+        profile.save().then(profile => response.json(profile));
+      })
+      .catch(err => response.status(404).json(err));
+  }
+);
+
+// @route DELETE api/profile/education/:edu_id
+// @description Delete education from profile
+// @access Private
+router.delete(
+  "/education/:edu_id",
+  passport.authenticate("jwt", { session: false }),
+  (request, response) => {
+    Profile.findOne({ user: request.user.id })
+      .then(profile => {
+        // Get remove index
+        const removeIndex = profile.education
+          .map(item => item.id)
+          .indexOf(request.params.edu_id);
+
+        // Slice out of array
+        profile.education.splice(removeIndex, 1);
+
+        //save
+        profile.save().then(profile => response.json(profile));
+      })
+      .catch(err => response.status(404).json(err));
+  }
+);
+
+// @route DELETE api/profile
+// @description Delete user and profile
+// @access Private
+router.delete(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  (request, response) => {
+    Profile.findOneAndRemove({ user: request.user.id }).then(() => {
+      User.findOneAndRemove({ _id: request.user.id }).then(() =>
+        response.json({ success: true })
+      );
     });
   }
 );
