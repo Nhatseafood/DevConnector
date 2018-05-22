@@ -161,4 +161,76 @@ router.post(
   }
 );
 
+// @route POST api/posts/comment/:id
+// @description add comment to post
+// @access Private
+router.post(
+  "/comment/:id",
+  passport.authenticate("jwt", { session: false }),
+  (request, response) => {
+    const { errors, isValid } = validatePostInput(request.body);
+
+    // Check Validation
+    if (!isValid) {
+      // if any errors, send 400 with errors object
+      return response.status(400).json(errors);
+    }
+
+    Post.findById(request.params.id)
+      .then(post => {
+        const newComment = {
+          text: request.body.text,
+          name: request.body.name,
+          avatar: request.body.avatar,
+          user: request.user.id
+        };
+
+        // Add to comment array
+        post.comments.unshift(newComment);
+
+        // Save
+        post.save().then(post => response.json(post));
+      })
+      .catch(err =>
+        response.status(404).json({ postnotfound: "No post found" })
+      );
+  }
+);
+
+// @route DELETE api/posts/comment/:id/:comment_id
+// @description Remove comment to post
+// @access Private
+router.delete(
+  "/comment/:id/:comment_id",
+  passport.authenticate("jwt", { session: false }),
+  (request, response) => {
+    Post.findById(request.params.id)
+      .then(post => {
+        // CHeck to see if the comment exist
+        if (
+          post.comments.filter(
+            comment => comment._id.toString() === request.params.comment_id
+          ).length === 0
+        ) {
+          return response
+            .status(404)
+            .json({ commentnotexists: "Comment does not exist" });
+        }
+
+        // Get remove index
+        const removeIndex = post.comments
+          .map(item => item._id.toString())
+          .indexOf(request.params.comment_id);
+
+        // SPice comment out of array
+        post.comments.splice(removeIndex, 1);
+
+        post.save().then(post => response.json(post));
+      })
+      .catch(err =>
+        response.status(404).json({ postnotfound: "No post found" })
+      );
+  }
+);
+
 module.exports = router;
