@@ -5,6 +5,7 @@ const passport = require("passport");
 
 //Post model
 const Post = require("../../models/Post");
+//Profile Model
 const Profile = require("../../models/Profile");
 
 //Validation
@@ -25,7 +26,7 @@ router.get("/", (request, response) => {
     .sort({ date: -1 })
     .then(posts => response.json(posts))
     .catch(err =>
-      response.status(404).json({ nopostfound: "No posts found with that ID" })
+      response.status(404).json({ nopostsfound: "No posts found with that ID" })
     );
 });
 
@@ -34,7 +35,7 @@ router.get("/", (request, response) => {
 // @access Public
 router.get("/:id", (request, response) => {
   Post.findById(request.params.id)
-    .then(posts => response.json(posts))
+    .then(post => response.json(post))
     .catch(err =>
       response.status(404).json({ nopostfound: "No post found with that ID" })
     );
@@ -84,6 +85,74 @@ router.delete(
 
           // Delete
           post.remove().then(() => response.json({ success: true }));
+        })
+        .catch(err =>
+          response.status(404).json({ postnotfound: " No post found" })
+        );
+    });
+  }
+);
+
+// @route POST api/posts/like/:id
+// @description LIKE Post
+// @access Private
+router.post(
+  "/like/:id",
+  passport.authenticate("jwt", { session: false }),
+  (request, response) => {
+    Profile.findOne({ user: request.user.id }).then(profile => {
+      Post.findById(request.params.id)
+        .then(post => {
+          if (
+            post.likes.filter(like => like.user.toString() === request.user.id)
+              .length > 0
+          ) {
+            return response
+              .status(400)
+              .json({ alreadyliked: "User already liked this post" });
+          }
+
+          // Add user id to likes array
+          post.likes.unshift({ user: request.user.id });
+
+          post.save().then(post => response.json(post));
+        })
+        .catch(err =>
+          response.status(404).json({ postnotfound: " No post found" })
+        );
+    });
+  }
+);
+
+// @route POST api/posts/unlike/:id
+// @description UNLIKE Post
+// @access Private
+router.post(
+  "/unlike/:id",
+  passport.authenticate("jwt", { session: false }),
+  (request, response) => {
+    Profile.findOne({ user: request.user.id }).then(profile => {
+      Post.findById(request.params.id)
+        .then(post => {
+          if (
+            post.likes.filter(like => like.user.toString() === request.user.id)
+              .length === 0
+          ) {
+            return response
+              .status(400)
+              .json({ notliked: "You have not yet like this post" });
+          }
+
+          // Get remove index
+          const removeIndex = post.likes
+            .map(item => item.user.toString())
+            .indexOf(request.user.id);
+
+          //spice out of array
+          post.likes.splice(removeIndex, 1);
+
+          // Save
+          post.save().then(post => response.json(post));
         })
         .catch(err =>
           response.status(404).json({ postnotfound: " No post found" })
