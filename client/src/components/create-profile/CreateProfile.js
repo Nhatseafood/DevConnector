@@ -42,6 +42,7 @@ class CreateProfile extends Component {
 
     let socialInputs;
 
+    if (displaySocialInputs) {
       socialInputs = (
         <div>
           <InputGroup
