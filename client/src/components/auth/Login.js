@@ -12,8 +12,15 @@ class Login extends Component {
       password: "",
       errors: {}
     };
+
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
+  }
+
+  componentDidMount() {
+    if (this.props.auth.isAuthenticated) {
+      this.props.history.push("/dashboard");
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -26,10 +33,6 @@ class Login extends Component {
     }
   }
 
-  onChange(event) {
-    this.setState({ [event.target.name]: event.target.value });
-  }
-
   onSubmit(event) {
     event.preventDefault();
 
@@ -39,6 +42,9 @@ class Login extends Component {
     };
 
     this.props.loginUser(userData);
+  }
+  onChange(event) {
+    this.setState({ [event.target.name]: event.target.value });
   }
 
   render() {
