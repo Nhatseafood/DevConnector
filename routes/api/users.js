@@ -20,7 +20,7 @@ router.get("/test", (request, response) =>
   response.json({ msg: "Users Works" })
 );
 
-// @route GET api/users/register
+// @route POST api/users/register
 // @description Register route
 // @access Public
 router.post("/register", (request, response) => {
