@@ -65,6 +65,24 @@ export const getPost = id => dispatch => {
     );
 };
 
+// Add Comment
+export const addComment = (postId, commentData) => dispatch => {
+  axios
+    .post(`/api/posts/comment/${postId}`, commentData)
+    .then(response =>
+      dispatch({
+        type: GET_POST,
+        payload: response.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
 // Delete Post
 export const deletePost = id => dispatch => {
   axios
