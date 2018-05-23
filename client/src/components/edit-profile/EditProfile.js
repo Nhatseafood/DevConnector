@@ -26,6 +26,7 @@ class CreateProfile extends Component {
       linkedin: "",
       youtube: "",
       instagram: "",
+      errors: {}
     };
 
     this.onChange = this.onChange.bind(this);
