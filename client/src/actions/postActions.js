@@ -4,7 +4,6 @@ import { ADD_POST, GET_ERRORS } from "./types";
 
 // Add Post
 export const addPost = postData => dispatch => {
-  dispatch(clearErrors());
   axios
     .post("/api/posts", postData)
     .then(response =>
