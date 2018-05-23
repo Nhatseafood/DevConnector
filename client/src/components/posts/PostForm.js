@@ -23,6 +23,7 @@ class PostForm extends Component {
   }
 
   onSubmit(event) {
+    event.preventDefault();
 
     const { user } = this.props.auth;
 
