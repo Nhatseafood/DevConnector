@@ -32,8 +32,8 @@ class AddExperience extends Component {
     }
   }
 
-  onSubmit(e) {
-    e.preventDefault();
+  onSubmit(event) {
+    event.preventDefault();
 
     const expData = {
       company: this.state.company,
@@ -48,11 +48,11 @@ class AddExperience extends Component {
     this.props.addExperience(expData, this.props.history);
   }
 
-  onChange(e) {
-    this.setState({ [e.target.name]: e.target.value });
+  onChange(event) {
+    this.setState({ [event.target.name]: event.target.value });
   }
 
-  onCheck(e) {
+  onCheck(event) {
     this.setState({
       disabled: !this.state.disabled,
       current: !this.state.current
