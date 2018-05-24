@@ -17,11 +17,11 @@ class Landing extends Component {
           <div className="container">
             <div className="row">
               <div className="col-md-12 text-center">
-                <h1 className="display-3 mb-4">Cosplay Connector</h1>
+                <h1 className="display-3 mb-4">DevConnector</h1>
                 <p className="lead">
                   {" "}
-                  Create a Cosplayer profile/portfolio, share posts and get help
-                  from other anime/comic lovers
+                  Create a Developer profile/portfolio, share posts and get help
+                  from other engineers
                 </p>
                 <hr />
                 <Link to="/register" className="btn btn-lg btn-info mr-2">
